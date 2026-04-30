@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jsPsych Red Circle</title>
+    <!-- jsPsych v7 assets -->
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+    <style>
+        /* Specification 1: Background color set to gray */
+        body {
+            background-color: #808080;
+            color: white; /* Contrast for instructions */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Specification 2: Red circle with 100px diameter using CSS */
+        .red-circle {
+            width: 100px;
+            height: 100px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .jspsych-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .instruction-text {
+            margin-top: 20px;
+            font-size: 18px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="jspsych-target"></div>
+</body>
+<script>
+    /**
+     * jsPsych Experiment
+     * 1. Gray background (#808080)
+     * 2. 100px red circle via CSS/DIV
+     * 3. Display until Space key is pressed
+     * 4. End message
+     */
+
+    // Initialize jsPsych
+    const jsPsych = initJsPsych({
+        on_finish: function() {
+            // Optional: output data to console
+            jsPsych.data.displayData();
+        }
+    });
+
+    // Create timeline
+    const timeline = [];
+
+    // Trial: Display Red Circle until Space key
+    const circle_trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
+            <div class="red-circle"></div>
+            <p class="instruction-text">スペースキーを押して終了</p>
+        `,
+        // Specification 3: Wait until Space key is pressed
+        choices: [' '], 
+        post_trial_gap: 0
+    };
+    timeline.push(circle_trial);
+
+    // Specification 4: End message
+    const end_trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `
+            <p class="instruction-text">終了しました。お疲れ様でした。</p>
+        `,
+        choices: "NO_KEYS",
+        trial_duration: 3000
+    };
+    timeline.push(end_trial);
+
+    // Run the experiment
+    jsPsych.run(timeline);
+</script>
+</html>
