@@ -9,6 +9,8 @@
     <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
     <!-- 必要なプラグインの読み込み -->
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+    <!-- 参加者情報入力用のサーベイプラグイン -->
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.3"></script>
     
     <style>
         body {
@@ -30,12 +32,17 @@
             font-weight: bold;
         }
 
-        /* 教示画面のスタイル */
-        .instructions {
-            font-size: 24px;
+        /* 教示・メッセージ画面のスタイル */
+        .instructions, .message-container {
+            font-size: 20px;
             line-height: 1.8;
             text-align: left;
             max-width: 800px;
+            padding: 20px;
+        }
+
+        .message-container {
+            text-align: center;
         }
 
         /* キー表示の装飾 */
@@ -52,16 +59,148 @@
             padding: 2px 4px;
             white-space: nowrap;
         }
+
+        /* ローディングアニメーション（データ送信中用） */
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .retry-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .retry-btn:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
     <div id="jspsych-target"></div>
 
     <script>
+        // 送信先GASのURL
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw3IdKlgsb_y5j86kTQmj2yD5W13T6KxAUpKO_hj-OejHud13tfhiDqytlIaSbX3LE/exec";
+
+        // 指数バックオフを用いたデータ送信関数
+        async function sendDataWithBackoff(csvData, maxRetries = 5) {
+            let delay = 1000; // 初期ウェイト時間: 1秒
+            
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(GAS_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // クロスオリジン制限（CORS）を回避するための設定
+                        headers: {
+                            'Content-Type': 'text/plain' // no-corsモード時にシンプルなリクエストにするためtext/plainを指定
+                        },
+                        body: csvData
+                    });
+                    
+                    // no-cors の場合はレスポンスの中身を取得できませんが、fetchが成功すれば送信できたとみなします
+                    return true;
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error; // 最大試行回数に達した場合はエラーを投げる
+                    }
+                    // 指数バックオフ: 1s -> 2s -> 4s -> 8s -> 16s と待ち時間を倍増
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+            return false;
+        }
+
         const jsPsych = initJsPsych({
             on_finish: function() {
-                // 実験終了時にCSV形式でデータを表示
-                jsPsych.data.displayData('csv');
+                const displayElement = jsPsych.getDisplayElement();
+                
+                // 1. レスポンス試行 (task: 'response') のデータのみをフィルタリング
+                const rawData = jsPsych.data.get().filter({ task: 'response' }).values();
+                
+                // 2. 分析に必要な列のみを抽出してCSV文字列を作成
+                const headers = ["subject_id", "timestamp", "word", "color", "condition", "rt", "correct", "response", "correct_response"];
+                const csvRows = [headers.join(",")];
+                
+                rawData.forEach(row => {
+                    const values = headers.map(header => {
+                        let val = row[header];
+                        // 値が undefined などの場合は空文字にする
+                        if (val === undefined || val === null) {
+                            val = "";
+                        }
+                        // カンマや改行が含まれる場合はダブルクォーテーションで囲む
+                        const stringVal = String(val);
+                        if (stringVal.includes(",") || stringVal.includes("\n") || stringVal.includes('"')) {
+                            return `"${stringVal.replace(/"/g, '""')}"`;
+                        }
+                        return stringVal;
+                    });
+                    csvRows.push(values.join(","));
+                });
+                
+                const csvContent = csvRows.join("\n");
+
+                // 3. 画面の安全な書き換え（送信中メッセージ）
+                displayElement.innerHTML = `
+                    <div class="message-container">
+                        <h2>実験が終了しました</h2>
+                        <p>データを送信しています。しばらくお待ちください...</p>
+                        <div class="loader"></div>
+                    </div>
+                `;
+
+                // 4. データ送信処理の実行
+                function attemptUpload() {
+                    sendDataWithBackoff(csvContent)
+                        .then(() => {
+                            displayElement.innerHTML = `
+                                <div class="message-container">
+                                    <h2 style="color: #27ae60;">送信完了</h2>
+                                    <p>実験データは正常に保存されました。</p>
+                                    <p>ご協力ありがとうございました。このブラウザタブを閉じてください。</p>
+                                </div>
+                            `;
+                        })
+                        .catch(error => {
+                            console.error("Data transmission failed:", error);
+                            displayElement.innerHTML = `
+                                <div class="message-container">
+                                    <h2 style="color: #c0392b;">送信エラー</h2>
+                                    <p>データの送信に失敗しました。接続環境を確認してください。</p>
+                                    <button class="retry-btn" id="retry-button">再試行する</button>
+                                </div>
+                            `;
+                            document.getElementById('retry-button').addEventListener('click', () => {
+                                displayElement.innerHTML = `
+                                    <div class="message-container">
+                                        <h2>再試行中...</h2>
+                                        <p>データを再度送信しています...</p>
+                                        <div class="loader"></div>
+                                    </div>
+                                `;
+                                attemptUpload();
+                            });
+                        });
+                }
+
+                attemptUpload();
             }
         });
 
@@ -82,7 +221,33 @@
 
         const timeline = [];
 
-        // (1) 教示画面 (Permissionエラー回避のため全画面化プラグインを削除)
+        // (1) 参加者ID入力画面
+        const participant_info = {
+            type: jsPsychSurveyText,
+            questions: [
+                {
+                    prompt: "参加者ID（例：学籍番号、任意のアルファベット・数字）を入力してください：",
+                    name: 'participant_id',
+                    required: true
+                }
+            ],
+            button_label: "次へ",
+            on_finish: function(data) {
+                // 入力されたIDを取得
+                const id = data.response.participant_id;
+                // 現在の日時を取得（ISO 8601形式）
+                const timestamp = new Date().toISOString();
+                
+                // 以降すべての試行データにIDとタイムスタンプを自動付与
+                jsPsych.data.addProperties({
+                    subject_id: id,
+                    timestamp: timestamp
+                });
+            }
+        };
+        timeline.push(participant_info);
+
+        // (2) 教示画面
         const instructions = {
             type: jsPsychHtmlKeyboardResponse,
             stimulus: `
@@ -104,7 +269,7 @@
         };
         timeline.push(instructions);
 
-        // a. 注視点 (+)
+        // a. 注視点 (+) (実験仕様: 500ms)
         const fixation = {
             type: jsPsychHtmlKeyboardResponse,
             stimulus: '<div style="font-size: 60px;">+</div>',
@@ -113,7 +278,7 @@
             data: { task: 'fixation' }
         };
 
-        // b. 刺激提示
+        // b. 刺激提示 (実験仕様: ITIとして post_trial_gap 1000ms を設定)
         const stimulus_trial = {
             type: jsPsychHtmlKeyboardResponse,
             stimulus: function() {
@@ -122,7 +287,6 @@
                 return `<div class="stroop-stimulus" style="color: ${color};">${word}</div>`;
             },
             choices: ['r', 'b', 'g'],
-            // ITI（試行間隔）を post_trial_gap として設定
             post_trial_gap: 1000, 
             data: {
                 task: 'response',
@@ -132,11 +296,13 @@
                 correct_response: jsPsych.timelineVariable('correct_key')
             },
             on_finish: function(data) {
-                // 正誤判定の記録
-                data.correct = (jsPsych.pluginAPI.compareKeys(data.response, data.correct_response));
+                // 正誤判定の記録。明示的に "true" または "false" という文字列を必ず代入します。
+                const is_correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+                data.correct = is_correct ? "true" : "false";
             }
         };
 
+        // テストの手続き定義 (実験仕様: 合計10試行)
         const test_procedure = {
             timeline: [fixation, stimulus_trial],
             timeline_variables: stroop_stimuli,
@@ -148,6 +314,7 @@
 
         timeline.push(test_procedure);
 
+        // 実験の実行
         jsPsych.run(timeline);
 
     </script>
