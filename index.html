@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>尚絅学院大学 吉田蘭真の心理学実験室</title>
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: 読みやすさと柔らかさのある丸ゴシック・角ゴシック -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans JP', 'sans-serif'],
+                        serif: ['Kiwi Maru', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#b9ddfe',
+                            300: '#7cc2fd',
+                            400: '#36a2fa',
+                            500: '#0c87eb',
+                            600: '#0269c7',
+                            700: '#0354a1',
+                        },
+                        neutral: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            700: '#44403c',
+                            800: '#292524',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* スムーズな遷移のためのグローバル設定 */
+        body {
+            background-color: #f7f9fc;
+            background-image: radial-gradient(#e0effe 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="font-sans text-neutral-700 min-h-screen flex flex-col antialiased">
+
+    <!-- メインコンテンツコンテナ -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12 md:py-20 flex flex-col justify-center">
+        
+        <!-- ヘッダー・挨拶文セクション -->
+        <header class="text-center mb-16 space-y-6">
+            <!-- アイコン風装飾 -->
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-100 text-brand-600 mb-2 shadow-sm">
+                <i data-lucide="beaker" class="w-8 h-8"></i>
+            </div>
+            
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-800 tracking-tight leading-tight font-serif">
+                尚絅学院大学 吉田蘭真の心理学実験室
+            </h1>
+            
+            <!-- 境界線 -->
+            <div class="w-24 h-1 bg-brand-300 mx-auto rounded-full"></div>
+            
+            <div class="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-sm border border-brand-100/50">
+                <p class="text-base md:text-lg text-neutral-600 leading-relaxed">
+                    ご訪問ありがとうございます。以下の実験へのご協力をお願いいたします。<br class="hidden md:inline">
+                    各実験は数分で終わります。スマートフォンからも参加可能です。
+                </p>
+                <div class="mt-4 flex flex-wrap justify-center gap-4 text-xs md:text-sm text-neutral-500">
+                    <span class="flex items-center gap-1.5 bg-neutral-100 px-3 py-1.5 rounded-full">
+                        <i data-lucide="smartphone" class="w-4 h-4 text-brand-500"></i> スマホ対応
+                    </span>
+                    <span class="flex items-center gap-1.5 bg-neutral-100 px-3 py-1.5 rounded-full">
+                        <i data-lucide="clock" class="w-4 h-4 text-brand-500"></i> 所要時間2〜3分
+                    </span>
+                    <span class="flex items-center gap-1.5 bg-neutral-100 px-3 py-1.5 rounded-full">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-brand-500"></i> 匿名回答
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 実験リスト（カードグリッド） -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- 実験0: はじめてのWebページ -->
+            <article class="bg-white rounded-3xl p-8 border border-neutral-200/60 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-xs font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded-full uppercase tracking-wider">
+                            Basic
+                        </span>
+                        <div class="p-3 bg-slate-100 text-slate-500 rounded-2xl group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors duration-300">
+                            <i data-lucide="globe" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-xl font-bold text-neutral-800 mb-3 group-hover:text-brand-600 transition-colors duration-300">
+                        実験0：はじめてのWebページ
+                    </h2>
+                    <p class="text-neutral-500 text-sm leading-relaxed mb-8">
+                        第2回で作成した記念すべき「Hello World」のページです。すべての始まりとなったシンプルなWebページをご覧いただけます。
+                    </p>
+                </div>
+                <div>
+                    <a href="hello_world.html" class="inline-flex items-center justify-center w-full bg-slate-100 hover:bg-slate-200 text-neutral-700 font-medium py-3.5 px-6 rounded-xl transition-all duration-200 group-hover:bg-brand-500 group-hover:text-white shadow-sm hover:shadow">
+                        <span>Hello Worldを見る</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- 実験1: ストループ課題 -->
+            <article class="bg-white rounded-3xl p-8 border border-neutral-200/60 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-xs font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full uppercase tracking-wider">
+                            Task 1
+                        </span>
+                        <div class="p-3 bg-slate-100 text-slate-500 rounded-2xl group-hover:bg-red-50 group-hover:text-red-500 transition-colors duration-300">
+                            <i data-lucide="palette" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-xl font-bold text-neutral-800 mb-3 group-hover:text-red-600 transition-colors duration-300">
+                        実験1：ストループ課題
+                    </h2>
+                    <p class="text-neutral-500 text-sm leading-relaxed mb-8">
+                        「文字の意味」と「文字の色」の干渉を調べる、簡単なキーボード入力のテストです。脳の認知処理プロセスを測定します。（所要時間：約3分）
+                    </p>
+                </div>
+                <div>
+                    <a href="stroop.html" class="inline-flex items-center justify-center w-full bg-slate-100 hover:bg-slate-200 text-neutral-700 font-medium py-3.5 px-6 rounded-xl transition-all duration-200 group-hover:bg-red-500 group-hover:text-white shadow-sm hover:shadow">
+                        <span>実験1に参加する</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </article>
+
+            <!-- 実験2: ミュラー・リヤー錯視 -->
+            <article class="bg-white rounded-3xl p-8 border border-neutral-200/60 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-wider">
+                            Task 2
+                        </span>
+                        <div class="p-3 bg-slate-100 text-slate-500 rounded-2xl group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-colors duration-300">
+                            <i data-lucide="sliders" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-xl font-bold text-neutral-800 mb-3 group-hover:text-emerald-600 transition-colors duration-300">
+                        実験2：ミュラー・リヤー錯視
+                    </h2>
+                    <p class="text-neutral-500 text-sm leading-relaxed mb-8">
+                        図形の長さが違って見える錯覚の度合いを測る、スライダーを使った直感的な視覚テストです。あなたの知覚の正確性に迫ります。（所要時間：約2分）
+                    </p>
+                </div>
+                <div>
+                    <a href="muller_lyer_final.html" class="inline-flex items-center justify-center w-full bg-slate-100 hover:bg-slate-200 text-neutral-700 font-medium py-3.5 px-6 rounded-xl transition-all duration-200 group-hover:bg-emerald-500 group-hover:text-white shadow-sm hover:shadow">
+                        <span>実験2に参加する</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- 注意事項・プライバシー表記 -->
+        <footer class="mt-16 text-center text-xs text-neutral-400 space-y-2">
+            <p>※ 本実験で得られたデータは学術研究および統計処理の目的のみに使用され、個人が特定されることはありません。</p>
+            <p>&copy; 2026 Shokei Gakuin University. Yoshida Ramma. All Rights Reserved.</p>
+        </footer>
+
+    </main>
+
+    <!-- Lucideアイコンのイニシャライズスクリプト -->
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
