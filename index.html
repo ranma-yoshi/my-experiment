@@ -3,187 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>尚絅学院大学 吉田蘭真の心理学実験室</title>
-    <!-- Tailwind CSS (CDN) -->
+    <title>心理学実験ポータル：ミュラー・リヤー錯視実験</title>
+    <!-- Tailwind CSS for Modern & Responsive Design -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: 読みやすさと柔らかさのある丸ゴシック・角ゴシック -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Noto Sans JP', 'sans-serif'],
-                        serif: ['Kiwi Maru', 'serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            200: '#b9ddfe',
-                            300: '#7cc2fd',
-                            400: '#36a2fa',
-                            500: '#0c87eb',
-                            600: '#0269c7',
-                            700: '#0354a1',
-                        },
-                        neutral: {
-                            50: '#fafaf9',
-                            100: '#f5f5f4',
-                            200: '#e7e5e4',
-                            700: '#44403c',
-                            800: '#292524',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* スムーズな遷移のためのグローバル設定 */
-        body {
-            background-color: #f7f9fc;
-            background-image: radial-gradient(#e0effe 1px, transparent 1px);
-            background-size: 24px 24px;
+        /* 錯視用デモのスタイル調整 */
+        .shaft {
+            height: 4px;
+            background-color: #1f2937;
+            position: relative;
+            transition: width 0.3s ease;
         }
+        .fin {
+            position: absolute;
+            width: 20px;
+            height: 4px;
+            background-color: #1f2937;
+            transform-origin: left center;
+        }
+        /* 外向きの羽 (<) */
+        .fin-inward-left-top { transform: rotate(45deg); left: 0; }
+        .fin-inward-left-bottom { transform: rotate(-45deg); left: 0; }
+        .fin-inward-right-top { transform: rotate(135deg); right: 0; transform-origin: right center; }
+        .fin-inward-right-bottom { transform: rotate(-135deg); right: 0; transform-origin: right center; }
+        
+        /* 内向きの羽 (>) */
+        .fin-outward-left-top { transform: rotate(135deg); left: 0; }
+        .fin-outward-left-bottom { transform: rotate(-135deg); left: 0; }
+        .fin-outward-right-top { transform: rotate(45deg); right: 0; transform-origin: right center; }
+        .fin-outward-right-bottom { transform: rotate(-45deg); right: 0; transform-origin: right center; }
     </style>
 </head>
-<body class="font-sans text-neutral-700 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
 
-    <!-- メインコンテンツコンテナ -->
-    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12 md:py-20 flex flex-col justify-center">
-        
-        <!-- ヘッダー・挨拶文セクション -->
-        <header class="text-center mb-16 space-y-6">
-            <!-- アイコン風装飾 -->
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-100 text-brand-600 mb-2 shadow-sm">
-                <i data-lucide="beaker" class="w-8 h-8"></i>
+    <!-- ナビゲーションバー -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-indigo-600 text-2xl"><i class="fa-solid fa-graduation-cap"></i></span>
+                <span class="font-bold text-xl tracking-tight text-slate-900">心理学実験オンラインポータル</span>
             </div>
-            
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-800 tracking-tight leading-tight font-serif">
-                尚絅学院大学 吉田蘭真の心理学実験室
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="#about" class="text-slate-600 hover:text-indigo-600 transition-colors">当研究について</a>
+                <a href="#experiments" class="text-slate-600 hover:text-indigo-600 transition-colors font-medium">実験一覧</a>
+                <a href="#transparency" class="text-slate-600 hover:text-indigo-600 transition-colors">オープンサイエンス</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 text-white py-16 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-semibold px-3 py-1.5 rounded-full uppercase tracking-wider">Open Science Project</span>
+            <h1 class="text-3xl md:text-5xl font-extrabold mt-6 tracking-tight leading-tight">
+                ミュラー・リヤー錯視における<br class="hidden sm:inline">主観的等価点の測定実験
             </h1>
+            <p class="mt-4 text-base md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                本プロジェクトは、事前登録（プレレジストレーション）を導入したオープンサイエンス実践研究です。実験の計画、仮説、分析手法を事前に公開し、研究の透明性と再現性を保証しています。
+            </p>
+        </div>
+    </section>
+
+    <!-- メインコンテンツ -->
+    <main class="max-w-6xl mx-auto px-4 py-12 flex-grow w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <!-- 境界線 -->
-            <div class="w-24 h-1 bg-brand-300 mx-auto rounded-full"></div>
-            
-            <div class="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-sm border border-brand-100/50">
-                <p class="text-base md:text-lg text-neutral-600 leading-relaxed">
-                    ご訪問ありがとうございます。以下の実験へのご協力をお願いいたします。<br class="hidden md:inline">
-                    各実験は数分で終わります。スマートフォンからも参加可能です。
-                </p>
-                <div class="mt-4 flex flex-wrap justify-center gap-4 text-xs md:text-sm text-neutral-500">
-                    <span class="flex items-center gap-1.5 bg-neutral-100 px-3 py-1.5 rounded-full">
-                        <i data-lucide="smartphone" class="w-4 h-4 text-brand-500"></i> スマホ対応
-                    </span>
-                    <span class="flex items-center gap-1.5 bg-neutral-100 px-3 py-1.5 rounded-full">
-                        <i data-lucide="clock" class="w-4 h-4 text-brand-500"></i> 所要時間2〜3分
-                    </span>
-                    <span class="flex items-center gap-1.5 bg-neutral-100 px-3 py-1.5 rounded-full">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-brand-500"></i> 匿名回答
-                    </span>
+            <!-- 左側・中央：実験紹介 ＆ 事前登録・変更履歴ボタンを内包するメインカード -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- 実験実施カード (ミュラーリヤー錯視) -->
+                <div id="experiments" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <!-- カードヘッダー -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-white px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <span class="text-indigo-600 text-xl"><i class="fa-solid fa-flask-vial"></i></span>
+                            <h2 class="text-xl font-bold text-slate-800">本番実験：ミュラー・リヤー錯視実験</h2>
+                        </div>
+                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span> 稼働中
+                        </span>
+                    </div>
+
+                    <!-- カードコンテンツ -->
+                    <div class="p-6 md:p-8 space-y-6">
+                        <!-- 実験の概要 -->
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2 mb-2">
+                                <i class="fa-solid fa-magnifying-glass text-slate-400"></i> 実験の目的と概要
+                            </h3>
+                            <p class="text-slate-600 leading-relaxed text-sm md:text-base">
+                                矢羽の向き（内向き・外向き）が、主観的な線の長さの知覚にどのような影響を与えるかを測定します。調整法を用いて、左右の線が同じ長さに感じられる「主観的等価点 (PSE)」を特定し、錯視量の個人差や傾向を分析します。
+                            </p>
+                        </div>
+
+                        <!-- 所要時間・環境 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl text-xs md:text-sm border border-slate-100">
+                            <div class="flex items-center gap-2 text-slate-600">
+                                <i class="fa-regular fa-clock text-indigo-500 text-base"></i>
+                                <span><strong>所要時間:</strong> 約 5分</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-slate-600">
+                                <i class="fa-solid fa-desktop text-indigo-500 text-base"></i>
+                                <span><strong>推奨環境:</strong> PC（ブラウザ）</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-slate-600">
+                                <i class="fa-solid fa-shield-halved text-indigo-500 text-base"></i>
+                                <span><strong>倫理配慮:</strong> 完全匿名、自由中断</span>
+                            </div>
+                        </div>
+
+                        <!-- ⚠️ デザインの工夫：役割に応じた3種のボタンレイアウト（実験・プレレジ・履歴） -->
+                        <div class="pt-4 border-t border-slate-100 space-y-4">
+                            <!-- 1. 実験開始（目立つプライマリーアクション） -->
+                            <div class="w-full">
+                                <a href="experiment.html" class="group flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-md shadow-indigo-600/10 hover:shadow-indigo-600/20 text-center text-base md:text-lg">
+                                    <i class="fa-solid fa-play animate-pulse"></i>
+                                    <span>実験に参加する（本編スタート）</span>
+                                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                                </a>
+                            </div>
+
+                            <!-- 2. 事前登録 ＆ 3. 変更履歴（クリーンな透明性をアピールするサブアクション群） -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                <!-- プレレジ確認（白抜きの枠線スタイル：誤タップ防止かつプロフェッショナルな印象） -->
+                                <a href="https://github.com/ranma-yoshi/my-experiment/blob/main/preregistration.md" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   class="flex items-center justify-center gap-2 bg-white hover:bg-indigo-50 text-indigo-600 border-2 border-indigo-500/80 hover:border-indigo-600 font-semibold py-3 px-4 rounded-xl transition-colors duration-150 text-sm">
+                                    <i class="fa-solid fa-book-bookmark"></i>
+                                    <span>プレレジ（事前登録）を確認する</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-75"></i>
+                                </a>
+
+                                <!-- 変更履歴（控えめなグレー背景＆タイムスタンプ証明を伝えるサブスタイル） -->
+                                <a href="https://github.com/ranma-yoshi/my-experiment/commits/main/preregistration.md" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   class="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300/60 font-medium py-3 px-4 rounded-xl transition-colors duration-150 text-sm">
+                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                    <span>変更履歴（証拠・タイムスタンプ）</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-75"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+
+                <!-- 錯視簡易デモ体験エリア -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+                    <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-indigo-500"></i>
+                        <span>ミュラー・リヤー錯視とは？（ミニ体験）</span>
+                    </h3>
+                    <p class="text-slate-600 text-sm">
+                        下の2本の線は、物理的には<strong>全く同じ長さ</strong>ですが、矢羽の向きによって上の線（内向き）が短く、下の線（外向き）が長く見えませんか？スライダーを動かして、見た目の長さを揃えてみましょう。
+                    </p>
+
+                    <!-- デモ用キャンバス -->
+                    <div class="bg-slate-100/70 p-6 rounded-xl flex flex-col items-center justify-center gap-10 border border-slate-200/50 my-4 h-48">
+                        <!-- 線A (内向き) -->
+                        <div class="flex items-center justify-center w-full">
+                            <div id="shaft-a" class="shaft w-[160px]">
+                                <!-- 左矢羽 (内向き) -->
+                                <div class="fin fin-inward-left-top"></div>
+                                <div class="fin fin-inward-left-bottom"></div>
+                                <!-- 右矢羽 (内向き) -->
+                                <div class="fin fin-inward-right-top"></div>
+                                <div class="fin fin-inward-right-bottom"></div>
+                            </div>
+                        </div>
+
+                        <!-- 線B (外向き：長さ調整可能) -->
+                        <div class="flex items-center justify-center w-full">
+                            <div id="shaft-b" class="shaft w-[130px]">
+                                <!-- 左矢羽 (外向き) -->
+                                <div class="fin fin-outward-left-top"></div>
+                                <div class="fin fin-outward-left-bottom"></div>
+                                <!-- 右矢羽 (外向き) -->
+                                <div class="fin fin-outward-right-top"></div>
+                                <div class="fin fin-outward-right-bottom"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- スライダーコントロール -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-semibold text-slate-500">
+                            <span>下の線を短くする</span>
+                            <span id="length-indicator" class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">下の線の長さ: 130px</span>
+                            <span>下の線を長くする</span>
+                        </div>
+                        <input type="range" id="length-slider" min="80" max="240" value="130" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                        <div class="text-center">
+                            <button id="reveal-btn" class="mt-2 text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-1.5 px-3 rounded-lg transition-colors">
+                                <i class="fa-solid fa-eye mr-1"></i> 正解（物理的な等価点）を表示する
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </header>
 
-        <!-- 実験リスト（カードグリッド） -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            <!-- 実験0: はじめてのWebページ -->
-            <article class="bg-white rounded-3xl p-8 border border-neutral-200/60 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1">
-                <div>
-                    <div class="flex items-center justify-between mb-6">
-                        <span class="text-xs font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded-full uppercase tracking-wider">
-                            Basic
-                        </span>
-                        <div class="p-3 bg-slate-100 text-slate-500 rounded-2xl group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors duration-300">
-                            <i data-lucide="globe" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <h2 class="text-xl font-bold text-neutral-800 mb-3 group-hover:text-brand-600 transition-colors duration-300">
-                        実験0：はじめてのWebページ
-                    </h2>
-                    <p class="text-neutral-500 text-sm leading-relaxed mb-8">
-                        第2回で作成した記念すべき「Hello World」のページです。すべての始まりとなったシンプルなWebページをご覧いただけます。
+            <!-- 右側：サイドバー（オープンサイエンス・研究プロトコル情報） -->
+            <div class="space-y-6">
+                
+                <!-- オープンサイエンス解説カード -->
+                <div id="transparency" class="bg-gradient-to-b from-slate-900 to-slate-800 text-slate-100 rounded-2xl p-6 shadow-sm border border-slate-700">
+                    <h3 class="font-bold text-white text-lg flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-seedling text-emerald-400 animate-bounce"></i>
+                        <span>オープンサイエンスの実践</span>
+                    </h3>
+                    <p class="text-xs md:text-sm text-slate-300 leading-relaxed mb-4">
+                        心理学界で重要視されている<strong>「再現性の危機」</strong>に対抗するため、当実験では「事前登録」を厳格に実施しています。
                     </p>
+                    
+                    <ul class="space-y-3 text-xs md:text-sm text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-emerald-400 mt-0.5"><i class="fa-solid fa-circle-check"></i></span>
+                            <span><strong>出版バイアスの防止:</strong> 有意差が出なくてもすべてのデータを登録に基づき解析・報告します。</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-emerald-400 mt-0.5"><i class="fa-solid fa-circle-check"></i></span>
+                            <span><strong>分析プランの固定:</strong> データを集めてから解析法を都合よく変更する行為(p-hacking)を防ぎます。</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <span class="text-emerald-400 mt-0.5"><i class="fa-solid fa-circle-check"></i></span>
+                            <span><strong>確実な証拠性:</strong> GitHubのコミット履歴（タイムスタンプ）により、データ取得「前」に登録された宣言であることを証明します。</span>
+                        </li>
+                    </ul>
                 </div>
-                <div>
-                    <a href="hello_world.html" class="inline-flex items-center justify-center w-full bg-slate-100 hover:bg-slate-200 text-neutral-700 font-medium py-3.5 px-6 rounded-xl transition-all duration-200 group-hover:bg-brand-500 group-hover:text-white shadow-sm hover:shadow">
-                        <span>Hello Worldを見る</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
-                    </a>
-                </div>
-            </article>
 
-            <!-- 実験1: ストループ課題 -->
-            <article class="bg-white rounded-3xl p-8 border border-neutral-200/60 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1">
-                <div>
-                    <div class="flex items-center justify-between mb-6">
-                        <span class="text-xs font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full uppercase tracking-wider">
-                            Task 1
-                        </span>
-                        <div class="p-3 bg-slate-100 text-slate-500 rounded-2xl group-hover:bg-red-50 group-hover:text-red-500 transition-colors duration-300">
-                            <i data-lucide="palette" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <h2 class="text-xl font-bold text-neutral-800 mb-3 group-hover:text-red-600 transition-colors duration-300">
-                        実験1：ストループ課題
-                    </h2>
-                    <p class="text-neutral-500 text-sm leading-relaxed mb-8">
-                        「文字の意味」と「文字の色」の干渉を調べる、簡単なキーボード入力のテストです。脳の認知処理プロセスを測定します。（所要時間：約3分）
-                    </p>
+                <!-- ステップガイド -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-sm">
+                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-slate-400"></i>
+                        <span>参加の流れ</span>
+                    </h3>
+                    <ol class="relative border-l border-slate-200 space-y-6 ml-3 text-xs md:text-sm">
+                        <li class="ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-100 text-indigo-800 font-bold rounded-full -left-3 ring-8 ring-white">
+                                1
+                            </span>
+                            <h4 class="font-bold text-slate-800">実験内容の確認</h4>
+                            <p class="text-slate-500 mt-1">概要を読み、不安がないか確認します。必要に応じてプレレジストレーションの内容もご確認いただけます。</p>
+                        </li>
+                        <li class="ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-100 text-indigo-800 font-bold rounded-full -left-3 ring-8 ring-white">
+                                2
+                            </span>
+                            <h4 class="font-bold text-slate-800">実験開始（参加）</h4>
+                            <p class="text-slate-500 mt-1">「実験に参加する」ボタンを押し、画面の指示に従って視覚刺激の長さを調整してください。</p>
+                        </li>
+                        <li class="ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-100 text-indigo-800 font-bold rounded-full -left-3 ring-8 ring-white">
+                                3
+                            </span>
+                            <h4 class="font-bold text-slate-800">データの送信</h4>
+                            <p class="text-slate-500 mt-1">測定終了後、自動で安全に匿名化されたデータが送信・集計されます。ご協力ありがとうございました！</p>
+                        </li>
+                    </ol>
                 </div>
-                <div>
-                    <a href="stroop.html" class="inline-flex items-center justify-center w-full bg-slate-100 hover:bg-slate-200 text-neutral-700 font-medium py-3.5 px-6 rounded-xl transition-all duration-200 group-hover:bg-red-500 group-hover:text-white shadow-sm hover:shadow">
-                        <span>実験1に参加する</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
-                    </a>
-                </div>
-            </article>
 
-            <!-- 実験2: ミュラー・リヤー錯視 -->
-            <article class="bg-white rounded-3xl p-8 border border-neutral-200/60 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group transform hover:-translate-y-1">
-                <div>
-                    <div class="flex items-center justify-between mb-6">
-                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-wider">
-                            Task 2
-                        </span>
-                        <div class="p-3 bg-slate-100 text-slate-500 rounded-2xl group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-colors duration-300">
-                            <i data-lucide="sliders" class="w-6 h-6"></i>
-                        </div>
-                    </div>
-                    <h2 class="text-xl font-bold text-neutral-800 mb-3 group-hover:text-emerald-600 transition-colors duration-300">
-                        実験2：ミュラー・リヤー錯視
-                    </h2>
-                    <p class="text-neutral-500 text-sm leading-relaxed mb-8">
-                        図形の長さが違って見える錯覚の度合いを測る、スライダーを使った直感的な視覚テストです。あなたの知覚の正確性に迫ります。（所要時間：約2分）
-                    </p>
-                </div>
-                <div>
-                    <a href="muller_lyer_final.html" class="inline-flex items-center justify-center w-full bg-slate-100 hover:bg-slate-200 text-neutral-700 font-medium py-3.5 px-6 rounded-xl transition-all duration-200 group-hover:bg-emerald-500 group-hover:text-white shadow-sm hover:shadow">
-                        <span>実験2に参加する</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
-                    </a>
-                </div>
-            </article>
+            </div>
 
-        </section>
-
-        <!-- 注意事項・プライバシー表記 -->
-        <footer class="mt-16 text-center text-xs text-neutral-400 space-y-2">
-            <p>※ 本実験で得られたデータは学術研究および統計処理の目的のみに使用され、個人が特定されることはありません。</p>
-            <p>&copy; 2026 Shokei Gakuin University. Yoshida Ramma. All Rights Reserved.</p>
-        </footer>
-
+        </div>
     </main>
 
-    <!-- Lucideアイコンのイニシャライズスクリプト -->
+    <!-- フッター -->
+    <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-sm">
+            <div class="flex flex-col items-center md:items-start gap-1">
+                <span class="text-white font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-microscope text-indigo-400"></i> ミュラー・リヤー錯視オンライン検証プロジェクト
+                </span>
+                <span class="text-xs text-slate-500">© 2026 ranma-yoshi. Open Science Research Collective.</span>
+            </div>
+            <div class="flex gap-6 text-xs text-slate-400">
+                <a href="https://github.com/ranma-yoshi/my-experiment/blob/main/preregistration.md" target="_blank" class="hover:text-white transition-colors">事前登録文書</a>
+                <a href="https://github.com/ranma-yoshi/my-experiment/commits/main/preregistration.md" target="_blank" class="hover:text-white transition-colors">変更履歴 (GitHub)</a>
+                <span class="text-slate-600">|</span>
+                <span>Licensed under CC-BY 4.0</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- インタラクティブ・デモスクリプト -->
     <script>
-        lucide.createIcons();
+        const slider = document.getElementById('length-slider');
+        const shaftB = document.getElementById('shaft-b');
+        const indicator = document.getElementById('length-indicator');
+        const revealBtn = document.getElementById('reveal-btn');
+        let isRevealed = false;
+
+        // スライダーの変更を画面に反映
+        slider.addEventListener('input', (e) => {
+            const length = e.target.value;
+            shaftB.style.width = `${length}px`;
+            indicator.textContent = `下の線の長さ: ${length}px`;
+            
+            if (isRevealed) {
+                updateRevealColor(length);
+            }
+        });
+
+        // 正解表示ボタンのイベント
+        revealBtn.addEventListener('click', () => {
+            isRevealed = !isRevealed;
+            if (isRevealed) {
+                revealBtn.innerHTML = '<i class="fa-solid fa-eye-slash mr-1"></i> ガイドラインを非表示にする';
+                updateRevealColor(slider.value);
+            } else {
+                revealBtn.innerHTML = '<i class="fa-solid fa-eye mr-1"></i> 正解（物理的な等価点）を表示する';
+                shaftB.style.backgroundColor = '#1f2937';
+                document.querySelectorAll('#shaft-b .fin').forEach(fin => fin.style.backgroundColor = '#1f2937');
+                document.getElementById('shaft-a').style.backgroundColor = '#1f2937';
+                document.querySelectorAll('#shaft-a .fin').forEach(fin => fin.style.backgroundColor = '#1f2937');
+            }
+        });
+
+        function updateRevealColor(currentValue) {
+            // 線Aの長さは160px。これと一致している場合は緑、ずれている場合は差に応じて赤く染めます。
+            const difference = Math.abs(currentValue - 160);
+            let color = '#10b981'; // ぴったり（緑）
+            
+            if (difference > 0) {
+                // 差分が大きいほど赤みが強くなる
+                const intensity = Math.min(difference * 4, 255);
+                color = `rgb(${100 + intensity}, 40, 40)`;
+            }
+
+            // 線Bの色を更新
+            shaftB.style.backgroundColor = color;
+            document.querySelectorAll('#shaft-b .fin').forEach(fin => fin.style.backgroundColor = color);
+            
+            // 比較用の線Aも同期
+            const targetColor = '#10b981';
+            document.getElementById('shaft-a').style.backgroundColor = targetColor;
+            document.querySelectorAll('#shaft-a .fin').forEach(fin => fin.style.backgroundColor = targetColor);
+        }
     </script>
 </body>
 </html>
